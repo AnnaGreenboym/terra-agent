@@ -12,7 +12,7 @@ import sys
 from config import MAX_FIX_ATTEMPTS
 from terraform import generate_terraform
 from git_handler import git_flow
-
+from config import CI_WORKFLOW_FILENAME
 
 def _prompt(label: str) -> str:
     value = input(f"{label}: ").strip()
@@ -28,7 +28,6 @@ def main() -> None:
     user_input     = _prompt("What Terraform infrastructure should we create?")
     branch_name    = _prompt("GitHub branch name")
     commit_message = _prompt("Commit message")
-    ci_yml_path    = _prompt("Path to CI workflow YAML file")
 
     # ── Step 1: Generate & validate Terraform ────────────────────────────────
     print("\n=== Terraform Generation ===")
@@ -39,7 +38,7 @@ def main() -> None:
     # ── Step 2: Push .tf files + CI workflow in one commit ───────────────────
     print("\n=== Git Flow ===")
     try:
-        git_flow(branch_name, commit_message, ci_yml_source=ci_yml_path)
+        git_flow(branch_name, commit_message, ci_yml_source=CI_WORKFLOW_FILENAME)
     except (RuntimeError, FileNotFoundError) as exc:
         print(f"\n✗ Git error: {exc}")
         sys.exit(1)
